@@ -1,0 +1,8 @@
+/.lein-*
+/.nrepl-port
+.clj-kondo/.cache
+.build
+.cpcache
+.idea
+*.iml
+.DS_Store

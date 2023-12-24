@@ -1,6 +1,6 @@
 (ns ^:no-doc cloroutine.impl
   (:refer-clojure :exclude [compile])
-  (:require [cljs.analyzer] [cljs.env]
+  (:require                                                 ;[cljs.analyzer] [cljs.env]
     #?(:clj [clojure.tools.analyzer.jvm :as clj]))
   #?(:clj (:import (clojure.lang Compiler$LocalBinding IObj)
                    (java.lang.reflect Field Modifier)
@@ -75,8 +75,9 @@
 
 (defn analyze [env form]
   (if (:js-globals env)
-    (binding [cljs.env/*compiler* (or cljs.env/*compiler* (cljs.env/default-compiler-env))]
-      (cljs.analyzer/analyze env form nil nil))
+    (do
+      #_(binding [cljs.env/*compiler* (or cljs.env/*compiler* (cljs.env/default-compiler-env))]
+        (cljs.analyzer/analyze env form nil nil)))
     #?(:clj  (binding [clj/run-passes clj/scheduled-default-passes]
                (->> env
                     (into {} (map (fn [[symbol binding]]
@@ -114,9 +115,9 @@
           (emit-map [args meta]
             (with-meta (apply hash-map args) meta))
           (emit-js-object [args meta keys]
-            (with-meta (cons 'cljs.core/js-obj (interleave keys args)) meta))
+            #_(with-meta (cons 'cljs.core/js-obj (interleave keys args)) meta))
           (emit-js-array [args meta]
-            (with-meta (cons 'cljs.core/array args) meta))
+            #_(with-meta (cons 'cljs.core/array args) meta))
           (emit-place [ssa tag place]
             `(hint ~tag ~(-> ssa :places place :tag) ~place))
           (instance [ast]
@@ -311,7 +312,7 @@
 
                 :fn
                 (let [local (:local ast)
-                      cljs-crap (when-some [t (-> ast :methods first :type)] {:cljs.analyzer/type t})]
+                      cljs-crap {} #_(when-some [t (-> ast :methods first :type)] {:cljs.analyzer/type t})]
                   (-> (reduce (fn [ssa method]
                                 (-> ssa
                                     (add-closing-method method)
